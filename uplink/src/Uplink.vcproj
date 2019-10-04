@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\bin"
+			OutputDirectory="$(SolutionDir)Uplink\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\lib\mmgr;..\..\lib\tosser;..\..\lib\eclipse;..\..\lib\bungle;..\..\lib\gucci;..\..\lib\redshirt;..\..\lib\soundgarden;..\..\lib\vanbakel;..\..\lib\common;..\..\contrib\tcp4u.331\include;..\..\contrib\irclib;..\..\contrib\XCrashReport;&quot;..\..\contrib\SDL-1.2.11\include&quot;"
+				AdditionalIncludeDirectories="$(SolutionDir)Uplink\src;$(SolutionDir)lib\mmgr;$(SolutionDir)lib\tosser;$(SolutionDir)lib\eclipse;$(SolutionDir)lib\bungle;$(SolutionDir)lib\gucci;$(SolutionDir)lib\redshirt;$(SolutionDir)lib\soundgarden;$(SolutionDir)lib\vanbakel;$(SolutionDir)lib\common;$(SolutionDir)contrib\tcp4u.331\include;$(SolutionDir)contrib\irclib;$(SolutionDir)contrib\XCrashReport;&quot;$(SolutionDir)contrib\SDL-1.2.11\include&quot;"
 				PreprocessorDefinitions="USE_SDL;WIN32;_CRT_SECURE_NO_DEPRECATE;FULLGAME"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -67,7 +67,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="bungle.lib eclipse.lib gucci.lib redshirt.lib soundgarden.lib vanbakel.lib irclib.lib sdl.lib SDL_mixer.lib tcp4w32.lib libtiff.lib gltt.lib freetype.lib dbghelp.lib opengl32.lib glu32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\bin;..\..\contrib\bin;..\..\contrib\tcp4u.331\tcp4w32;&quot;..\..\contrib\tiff-3.7.2\libtiff&quot;;&quot;..\..\contrib\gltt-2.5&quot;;&quot;..\..\contrib\freetype-1.3.1&quot;;&quot;..\..\contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;..\..\contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)lib\bin;$(SolutionDir)contrib\bin;$(SolutionDir)contrib\tcp4u.331\tcp4w32;&quot;$(SolutionDir)contrib\tiff-3.7.2\libtiff&quot;;&quot;$(SolutionDir)contrib\gltt-2.5&quot;;&quot;$(SolutionDir)contrib\freetype-1.3.1&quot;;&quot;$(SolutionDir)contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;$(SolutionDir)contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
 				IgnoreDefaultLibraryNames="libcd.lib,libc.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -102,7 +102,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\bin"
+			OutputDirectory="$(SolutionDir)Uplink\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -128,7 +128,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".;..\..\lib\mmgr;..\..\lib\tosser;..\..\lib\eclipse;..\..\lib\bungle;..\..\lib\gucci;..\..\lib\redshirt;..\..\lib\soundgarden;..\..\lib\vanbakel;..\..\lib\common;..\..\contrib\tcp4u.331\include;..\..\contrib\irclib;..\..\contrib\XCrashReport;&quot;..\..\contrib\SDL-1.2.11\include&quot;"
+				AdditionalIncludeDirectories=".;$(SolutionDir)lib\mmgr;$(SolutionDir)lib\tosser;$(SolutionDir)lib\eclipse;$(SolutionDir)lib\bungle;$(SolutionDir)lib\gucci;$(SolutionDir)lib\redshirt;$(SolutionDir)lib\soundgarden;$(SolutionDir)lib\vanbakel;$(SolutionDir)lib\common;$(SolutionDir)contrib\tcp4u.331\include;$(SolutionDir)contrib\irclib;$(SolutionDir)contrib\XCrashReport;&quot;$(SolutionDir)contrib\SDL-1.2.11\include&quot;"
 				PreprocessorDefinitions="USE_SDL;WIN32;_CRT_SECURE_NO_DEPRECATE;FULLGAME"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -150,7 +150,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="bungle.lib eclipse.lib gucci.lib redshirt.lib soundgarden.lib vanbakel.lib irclib.lib sdl.lib SDL_mixer.lib tcp4w32.lib libtiff.lib gltt.lib freetype.lib dbghelp.lib opengl32.lib glu32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\bin;..\..\contrib\bin;..\..\contrib\tcp4u.331\tcp4w32;&quot;..\..\contrib\tiff-3.7.2\libtiff&quot;;&quot;..\..\contrib\gltt-2.5&quot;;&quot;..\..\contrib\freetype-1.3.1&quot;;&quot;..\..\contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;..\..\contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)lib\bin;$(SolutionDir)contrib\bin;$(SolutionDir)contrib\tcp4u.331\tcp4w32;&quot;$(SolutionDir)contrib\tiff-3.7.2\libtiff&quot;;&quot;$(SolutionDir)contrib\gltt-2.5&quot;;&quot;$(SolutionDir)contrib\freetype-1.3.1&quot;;&quot;$(SolutionDir)contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;$(SolutionDir)contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcd.lib,libc.lib"
 				GenerateDebugInformation="true"
@@ -186,7 +186,7 @@
 		</Configuration>
 		<Configuration
 			Name="Unoptimised|Win32"
-			OutputDirectory="..\bin"
+			OutputDirectory="$(SolutionDir)Uplink\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -212,7 +212,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\lib\tosser;..\..\lib\eclipse;..\..\lib\bungle;..\..\lib\gucci;..\..\lib\redshirt;..\..\lib\soundgarden;..\..\lib\vanbakel;..\..\lib\common;..\..\contrib\tcp4u.331\include;..\..\contrib\irclib;..\..\contrib\XCrashReport;&quot;..\..\contrib\SDL-1.2.11\include&quot;;..\..\lib\mmgr"
+				AdditionalIncludeDirectories=".;$(SolutionDir)lib\tosser;$(SolutionDir)lib\eclipse;$(SolutionDir)lib\bungle;$(SolutionDir)lib\gucci;$(SolutionDir)lib\redshirt;$(SolutionDir)lib\soundgarden;$(SolutionDir)lib\vanbakel;$(SolutionDir)lib\common;$(SolutionDir)contrib\tcp4u.331\include;$(SolutionDir)contrib\irclib;$(SolutionDir)contrib\XCrashReport;&quot;$(SolutionDir)contrib\SDL-1.2.11\include&quot;;$(SolutionDir)lib\mmgr"
 				PreprocessorDefinitions="USE_SDL;WIN32;_CRT_SECURE_NO_DEPRECATE;FULLGAME"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -234,7 +234,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="bungle.lib eclipse.lib gucci.lib redshirt.lib soundgarden.lib vanbakel.lib irclib.lib sdl.lib SDL_mixer.lib tcp4w32.lib libtiff.lib gltt.lib freetype.lib dbghelp.lib opengl32.lib glu32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\bin;..\..\contrib\bin;..\..\contrib\tcp4u.331\tcp4w32;&quot;..\..\contrib\tiff-3.7.2\libtiff&quot;;&quot;..\..\contrib\gltt-2.5&quot;;&quot;..\..\contrib\freetype-1.3.1&quot;;&quot;..\..\contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;..\..\contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)lib\bin;$(SolutionDir)contrib\bin;$(SolutionDir)contrib\tcp4u.331\tcp4w32;&quot;$(SolutionDir)contrib\tiff-3.7.2\libtiff&quot;;&quot;$(SolutionDir)contrib\gltt-2.5&quot;;&quot;$(SolutionDir)contrib\freetype-1.3.1&quot;;&quot;$(SolutionDir)contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;$(SolutionDir)contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcd.lib,libc.lib"
 				GenerateDebugInformation="true"
@@ -270,7 +270,7 @@
 		</Configuration>
 		<Configuration
 			Name="DemoRelease|Win32"
-			OutputDirectory="..\bin"
+			OutputDirectory="$(SolutionDir)Uplink\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -296,7 +296,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".;..\..\lib\mmgr;..\..\lib\tosser;..\..\lib\eclipse;..\..\lib\bungle;..\..\lib\gucci;..\..\lib\redshirt;..\..\lib\soundgarden;..\..\lib\vanbakel;..\..\lib\common;..\..\contrib\tcp4u.331\include;..\..\contrib\irclib;..\..\contrib\XCrashReport;&quot;..\..\contrib\SDL-1.2.11\include&quot;"
+				AdditionalIncludeDirectories=".;$(SolutionDir)lib\mmgr;$(SolutionDir)lib\tosser;$(SolutionDir)lib\eclipse;$(SolutionDir)lib\bungle;$(SolutionDir)lib\gucci;$(SolutionDir)lib\redshirt;$(SolutionDir)lib\soundgarden;$(SolutionDir)lib\vanbakel;$(SolutionDir)lib\common;$(SolutionDir)contrib\tcp4u.331\include;$(SolutionDir)contrib\irclib;$(SolutionDir)contrib\XCrashReport;&quot;$(SolutionDir)contrib\SDL-1.2.11\include&quot;"
 				PreprocessorDefinitions="USE_SDL;WIN32;_CRT_SECURE_NO_DEPRECATE;DEMOGAME"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -318,7 +318,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="bungle.lib eclipse.lib gucci.lib redshirt.lib soundgarden.lib vanbakel.lib irclib.lib sdl.lib SDL_mixer.lib tcp4w32.lib libtiff.lib gltt.lib freetype.lib dbghelp.lib opengl32.lib glu32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\bin;..\..\contrib\bin;..\..\contrib\tcp4u.331\tcp4w32;&quot;..\..\contrib\tiff-3.7.2\libtiff&quot;;&quot;..\..\contrib\gltt-2.5&quot;;&quot;..\..\contrib\freetype-1.3.1&quot;;&quot;..\..\contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;..\..\contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)lib\bin;$(SolutionDir)contrib\bin;$(SolutionDir)contrib\tcp4u.331\tcp4w32;&quot;$(SolutionDir)contrib\tiff-3.7.2\libtiff&quot;;&quot;$(SolutionDir)contrib\gltt-2.5&quot;;&quot;$(SolutionDir)contrib\freetype-1.3.1&quot;;&quot;$(SolutionDir)contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;$(SolutionDir)contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcd.lib,libc.lib"
 				GenerateDebugInformation="true"
@@ -354,7 +354,7 @@
 		</Configuration>
 		<Configuration
 			Name="DemoDebug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)Uplink\bin"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -380,7 +380,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\lib\mmgr;..\..\lib\tosser;..\..\lib\eclipse;..\..\lib\bungle;..\..\lib\gucci;..\..\lib\redshirt;..\..\lib\soundgarden;..\..\lib\vanbakel;..\..\lib\common;..\..\contrib\tcp4u.331\include;..\..\contrib\irclib;..\..\contrib\XCrashReport;&quot;..\..\contrib\SDL-1.2.11\include&quot;"
+				AdditionalIncludeDirectories=".;$(SolutionDir)lib\mmgr;$(SolutionDir)lib\tosser;$(SolutionDir)lib\eclipse;$(SolutionDir)lib\bungle;$(SolutionDir)lib\gucci;$(SolutionDir)lib\redshirt;$(SolutionDir)lib\soundgarden;$(SolutionDir)lib\vanbakel;$(SolutionDir)lib\common;$(SolutionDir)contrib\tcp4u.331\include;$(SolutionDir)contrib\irclib;$(SolutionDir)contrib\XCrashReport;&quot;$(SolutionDir)contrib\SDL-1.2.11\include&quot;"
 				PreprocessorDefinitions="USE_SDL;WIN32;_CRT_SECURE_NO_DEPRECATE;DEMOGAME"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -404,7 +404,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="bungle.lib eclipse.lib gucci.lib redshirt.lib soundgarden.lib vanbakel.lib irclib.lib sdl.lib SDL_mixer.lib tcp4w32.lib libtiff.lib gltt.lib freetype.lib dbghelp.lib opengl32.lib glu32.lib winmm.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\lib\bin;..\..\contrib\bin;..\..\contrib\tcp4u.331\tcp4w32;&quot;..\..\contrib\tiff-3.7.2\libtiff&quot;;&quot;..\..\contrib\gltt-2.5&quot;;&quot;..\..\contrib\freetype-1.3.1&quot;;&quot;..\..\contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;..\..\contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
+				AdditionalLibraryDirectories="$(SolutionDir)lib\bin;$(SolutionDir)contrib\bin;$(SolutionDir)contrib\tcp4u.331\tcp4w32;&quot;$(SolutionDir)contrib\tiff-3.7.2\libtiff&quot;;&quot;$(SolutionDir)contrib\gltt-2.5&quot;;&quot;$(SolutionDir)contrib\freetype-1.3.1&quot;;&quot;$(SolutionDir)contrib\SDL-1.2.11_dev\VisualC\SDL\Release&quot;;&quot;$(SolutionDir)contrib\SDL_mixer-1.2.7_patched\VisualC\Release&quot;"
 				IgnoreDefaultLibraryNames="libcd.lib,libc.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
