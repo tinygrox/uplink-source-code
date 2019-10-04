@@ -1,4 +1,4 @@
-
+.vs
 *.pdb
 *.lib
 *.tlog
@@ -15,4 +15,3 @@
 *.db-wal
 *.pch
 *.res
-.vs/Uplink/v15/.suo
