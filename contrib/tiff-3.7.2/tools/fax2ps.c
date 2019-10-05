@@ -1,4 +1,4 @@
-/* $Id: fax2ps.c,v 1.19 2005/03/03 12:48:31 dron Exp $" */
+/* $Id: fax2ps.c,v 1.31 2015-09-06 18:24:27 bfriesen Exp $" */
 
 /*
  * Copyright (c) 1991-1997 Sam Leffler
@@ -35,10 +35,19 @@
 # include <unistd.h>
 #endif
 
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+
 #ifdef HAVE_IO_H
 # include <io.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
+#include "tiffiop.h"
 #include "tiffio.h"
 
 float	defxres = 204.;		/* default x resolution (pixels/inch) */
@@ -269,9 +278,9 @@ findPage(TIFF* tif, uint16 pageNumber)
     uint16 pn = (uint16) -1;
     uint16 ptotal = (uint16) -1;
     if (GetPageNumber(tif)) {
-	while (pn != pageNumber && TIFFReadDirectory(tif) && GetPageNumber(tif))
+	while (pn != (pageNumber-1) && TIFFReadDirectory(tif) && GetPageNumber(tif))
 	    ;
-	return (pn == pageNumber);
+	return (pn == (pageNumber-1));
     } else
 	return (TIFFSetDirectory(tif, (tdir_t)(pageNumber-1)));
 }
@@ -315,8 +324,10 @@ static	void usage(int code);
 int
 main(int argc, char** argv)
 {
+#if !HAVE_DECL_OPTARG
     extern int optind;
     extern char* optarg;
+#endif
     uint16 *pages = NULL, npages = 0, pageNumber;
     int c, dowarnings = 0;		/* if 1, enable library warnings */
     TIFF* tif;
@@ -338,6 +349,11 @@ main(int argc, char** argv)
 		pages = (uint16*) realloc(pages, (npages+1)*sizeof(uint16));
 	    else
 		pages = (uint16*) malloc(sizeof(uint16));
+	    if( pages == NULL )
+	    {
+		fprintf(stderr, "Out of memory\n");
+		exit(-1);
+	    }
 	    pages[npages++] = pageNumber;
 	    break;
 	case 'w':
@@ -376,13 +392,26 @@ main(int argc, char** argv)
 
 	fd = tmpfile();
 	if (fd == NULL) {
-	    fprintf(stderr, "Could not create temporary file, exiting.\n");
-	    fclose(fd);
+	    fprintf(stderr, "Could not obtain temporary file.\n");
 	    exit(-2);
 	}
-	while ((n = read(fileno(stdin), buf, sizeof (buf))) > 0)
-	    write(fileno(fd), buf, n);
+#if defined(HAVE_SETMODE) && defined(O_BINARY)
+	setmode(fileno(stdin), O_BINARY);
+#endif
+	while ((n = read(fileno(stdin), buf, sizeof (buf))) > 0) {
+                if (write(fileno(fd), buf, n) != n) {
+                        fclose(fd);
+                        fprintf(stderr,
+                                "Could not copy stdin to temporary file.\n");
+                        exit(-2);  
+                }
+        }
+	_TIFF_lseek_f(fileno(fd), 0, SEEK_SET);
+#if defined(_WIN32) && defined(USE_WIN32_FILEIO)
+	tif = TIFFFdOpen(_get_osfhandle(fileno(fd)), "temp", "r");
+#else
 	tif = TIFFFdOpen(fileno(fd), "temp", "r");
+#endif
 	if (tif) {
 	    fax2ps(tif, npages, pages, "<stdin>");
 	    TIFFClose(tif);
@@ -407,7 +436,7 @@ char* stuff[] = {
 " -y yres       set default vertical resolution of input data (lpi)",
 " -S            scale output to page size",
 " -W width      set output page width (inches), default is 8.5",
-" -H height     set output page height (inchest), default is 11",
+" -H height     set output page height (inches), default is 11",
 NULL
 };
 
@@ -425,3 +454,10 @@ usage(int code)
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

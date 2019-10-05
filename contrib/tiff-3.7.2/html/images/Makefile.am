@@ -1,6 +1,6 @@
 # Tag Image File Format (TIFF) Software
 #
-# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
+# Copyright (C) 2004, Andrey Kiselev <dron@ak4719.spb.edu>
 #
 # Permission to use, copy, modify, distribute, and sell this software and 
 # its documentation for any purpose is hereby granted without fee, provided
@@ -44,3 +44,6 @@ docfiles = \
 	warning.gif
 
 dist_doc_DATA = $(docfiles)
+
+EXTRA_DIST = \
+	CMakeLists.txt

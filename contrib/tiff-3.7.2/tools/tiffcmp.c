@@ -1,4 +1,4 @@
-/* $Id: tiffcmp.c,v 1.9 2005/03/09 12:08:30 dron Exp $ */
+/* $Id: tiffcmp.c,v 1.18 2015-06-21 01:09:10 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler
@@ -29,12 +29,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
 #include "tiffio.h"
+
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
 
 static	int stopondiff = 1;
 static	int stoponfirsttag = 1;
@@ -47,9 +56,9 @@ static	uint32 imagelength;
 static	void usage(void);
 static	int tiffcmp(TIFF*, TIFF*);
 static	int cmptags(TIFF*, TIFF*);
-static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, int);
+static	int ContigCompare(int, uint32, unsigned char*, unsigned char*, tsize_t);
 static	int SeparateCompare(int, int, uint32, unsigned char*, unsigned char*);
-static	void PrintIntDiff(uint32, int, uint32, int32, int32);
+static	void PrintIntDiff(uint32, int, uint32, uint32, uint32);
 static	void PrintFloatDiff(uint32, int, uint32, double, double);
 
 static	void leof(const char*, uint32, int);
@@ -59,8 +68,10 @@ main(int argc, char* argv[])
 {
 	TIFF *tif1, *tif2;
 	int c, dirnum;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char* optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "ltz:")) != -1)
 		switch (c) {
@@ -251,6 +262,7 @@ bad1:
 static int
 cmptags(TIFF* tif1, TIFF* tif2)
 {
+	uint16 compression1, compression2;
 	CmpLongField(TIFFTAG_SUBFILETYPE,	"SubFileType");
 	CmpLongField(TIFFTAG_IMAGEWIDTH,	"ImageWidth");
 	CmpLongField(TIFFTAG_IMAGELENGTH,	"ImageLength");
@@ -267,8 +279,20 @@ cmptags(TIFF* tif1, TIFF* tif2)
 	CmpShortField(TIFFTAG_SAMPLEFORMAT,	"SampleFormat");
 	CmpFloatField(TIFFTAG_XRESOLUTION,	"XResolution");
 	CmpFloatField(TIFFTAG_YRESOLUTION,	"YResolution");
-	CmpLongField(TIFFTAG_GROUP3OPTIONS,	"Group3Options");
-	CmpLongField(TIFFTAG_GROUP4OPTIONS,	"Group4Options");
+	if( TIFFGetField(tif1, TIFFTAG_COMPRESSION, &compression1) &&
+		compression1 == COMPRESSION_CCITTFAX3 &&
+		TIFFGetField(tif2, TIFFTAG_COMPRESSION, &compression2) &&
+		compression2 == COMPRESSION_CCITTFAX3 )
+	{
+		CmpLongField(TIFFTAG_GROUP3OPTIONS,	"Group3Options");
+	}
+	if( TIFFGetField(tif1, TIFFTAG_COMPRESSION, &compression1) &&
+		compression1 == COMPRESSION_CCITTFAX4 &&
+		TIFFGetField(tif2, TIFFTAG_COMPRESSION, &compression2) &&
+		compression2 == COMPRESSION_CCITTFAX4 )
+	{
+		CmpLongField(TIFFTAG_GROUP4OPTIONS,	"Group4Options");
+	}
 	CmpShortField(TIFFTAG_RESOLUTIONUNIT,	"ResolutionUnit");
 	CmpShortField(TIFFTAG_PLANARCONFIG,	"PlanarConfiguration");
 	CmpLongField(TIFFTAG_ROWSPERSTRIP,	"RowsPerStrip");
@@ -304,7 +328,7 @@ cmptags(TIFF* tif1, TIFF* tif2)
 
 static int
 ContigCompare(int sample, uint32 row,
-	      unsigned char* p1, unsigned char* p2, int size)
+	      unsigned char* p1, unsigned char* p2, tsize_t size)
 {
     uint32 pix;
     int ppb = 8 / bitspersample;
@@ -379,7 +403,7 @@ ContigCompare(int sample, uint32 row,
 			int	s;
 
 			for(s = 0; s < samples_to_test; s++) {
-				if (*pix1 != *pix2) {
+				if (fabs(*pix1 - *pix2) < 0.000000000001) {
 					PrintFloatDiff(row, sample, pix,
 						       *pix1, *pix2);
 				}
@@ -403,7 +427,7 @@ ContigCompare(int sample, uint32 row,
 }
 
 static void
-PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
+PrintIntDiff(uint32 row, int sample, uint32 pix, uint32 w1, uint32 w2)
 {
 	if (sample < 0)
 		sample = 0;
@@ -422,9 +446,11 @@ PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
 			if ((w1 & mask2) ^ (w2 & mask2)) {
 				printf(
 			"Scanline %lu, pixel %lu, sample %d: %01x %01x\n",
-	    				(long) row, (long) pix,
-					sample, (w1 >> s) & mask1,
-					(w2 >> s) & mask1 );
+	    				(unsigned long) row,
+					(unsigned long) pix,
+					sample,
+					(unsigned int)((w1 >> s) & mask1),
+					(unsigned int)((w2 >> s) & mask1));
 				if (--stopondiff == 0)
 					exit(1);
 			}
@@ -433,19 +459,22 @@ PrintIntDiff(uint32 row, int sample, uint32 pix, int32 w1, int32 w2)
 	    }
 	case 8: 
 		printf("Scanline %lu, pixel %lu, sample %d: %02x %02x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		       (unsigned long) row, (unsigned long) pix, sample,
+		       (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
 	case 16:
 		printf("Scanline %lu, pixel %lu, sample %d: %04x %04x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		    (unsigned long) row, (unsigned long) pix, sample,
+		    (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
 	case 32:
 		printf("Scanline %lu, pixel %lu, sample %d: %08x %08x\n",
-		    (long) row, (long) pix, sample, w1, w2);
+		    (unsigned long) row, (unsigned long) pix, sample,
+		    (unsigned int) w1, (unsigned int) w2);
 		if (--stopondiff == 0)
 			exit(1);
 		break;
@@ -593,7 +622,7 @@ static int
 CheckLongTag(TIFF* tif1, TIFF* tif2, int tag, char* name)
 {
 	uint32 v1, v2;
-	CHECK(v1 == v2, "%s: %lu %lu\n");
+	CHECK(v1 == v2, "%s: %u %u\n");
 }
 
 static int
@@ -614,10 +643,17 @@ static void
 leof(const char* name, uint32 row, int s)
 {
 
-	printf("%s: EOF at scanline %lu", name, row);
+	printf("%s: EOF at scanline %lu", name, (unsigned long)row);
 	if (s >= 0)
 		printf(", sample %d", s);
 	printf("\n");
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

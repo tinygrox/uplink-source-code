@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.18.1 -->
-<!-- CreationDate: Fri Mar 11 13:01:18 2005 -->
+<!-- CreationDate: Sat Feb 24 18:37:17 2007 -->
 <html>
 <head>
 <meta name="generator" content="groff -Thtml, see www.gnu.org">
@@ -47,12 +47,12 @@ and decode an image into a fixed-format raster</p>
 0xff)</b></p>
 <!-- INDENTATION -->
 <p><b>int TIFFReadRGBAImage(TIFF *</b><i>tif</i><b>,
-u_long</b> <i>width</i><b>, u_long</b> <i>height</i><b>,
-u_long *</b><i>raster</i><b>, int</b>
+uint32</b> <i>width</i><b>, uint32</b> <i>height</i><b>,
+uint32 *</b><i>raster</i><b>, int</b>
 <i>stopOnError</i><b>)<br>
 int TIFFReadRGBAImageOriented(TIFF *</b><i>tif</i><b>,
-u_long</b> <i>width</i><b>, u_long</b> <i>height</i><b>,
-u_long *</b><i>raster</i><b>, int</b> <i>orientation</i><b>,
+uint32</b> <i>width</i><b>, uint32</b> <i>height</i><b>,
+uint32 *</b><i>raster</i><b>, int</b> <i>orientation</i><b>,
 int</b> <i>stopOnError</i><b>)</b></p>
 </td>
 </table>
@@ -288,10 +288,12 @@ insufficient memory to allocate a table used to map data to
 <tr valign="top" align="left">
 <td width="8%"></td>
 <td width="91%">
-<p><i>libtiff</i>(3TIFF), <i>TIFFOpen</i>(3TIFF),
-<i>TIFFRGBAImage</i>(3TIFF),
-<i>TIFFReadRGBAStrip</i>(3TIFF),
-<i>TIFFReadRGBATile</i>(3TIFF)</p>
+<p><b>TIFFOpen</b>(3TIFF), <b>TIFFRGBAImage</b>(3TIFF),
+<b>TIFFReadRGBAStrip</b>(3TIFF),
+<b>TIFFReadRGBATile</b>(3TIFF), <b>libtiff</b>(3TIFF)</p>
+<!-- INDENTATION -->
+<p>Libtiff library home page:
+<b>http://www.simplesystems.org/libtiff/</b></p>
 </td>
 </table>
 <hr>

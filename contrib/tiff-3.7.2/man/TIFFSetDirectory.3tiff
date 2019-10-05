@@ -1,4 +1,4 @@
-.\" $Id: TIFFSetDirectory.3tiff,v 1.1 2004/11/11 14:39:16 dron Exp $
+.\" $Id: TIFFSetDirectory.3tiff,v 1.4 2017-06-30 17:40:02 erouault Exp $
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -33,7 +33,7 @@ file
 .sp
 .BI "int TIFFSetDirectory(TIFF *" tif ", tdir_t " dirnum ")"
 .br
-.BI "int TIFFSetSubDirectory(TIFF *" tif ", uint32 " diroff ")"
+.BI "int TIFFSetSubDirectory(TIFF *" tif ", uint64 " diroff ")"
 .SH DESCRIPTION
 .I TIFFSetDirectory
 changes the current directory and reads its contents with
@@ -69,8 +69,11 @@ An error was encountered while reading the ``directory count'' field.
 An error was encountered while reading the ``link value'' that points to the
 next directory in a file.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
 .IR TIFFCurrentDirectory (3TIFF),
 .IR TIFFOpen (3TIFF),
 .IR TIFFReadDirectory (3TIFF),
-.IR TIFFWriteDirectory (3TIFF)
+.IR TIFFWriteDirectory (3TIFF),
+.IR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.simplesystems.org/libtiff/
