@@ -1,4 +1,4 @@
-/* $Id: tiffsplit.c,v 1.9 2004/06/05 08:11:26 dron Exp $ */
+/* $Id: tiffsplit.c,v 1.23 2015-05-28 13:10:26 bfriesen Exp $ */
 
 /*
  * Copyright (c) 1992-1997 Sam Leffler
@@ -24,11 +24,17 @@
  * OF THIS SOFTWARE.
  */
 
+#include "tif_config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "tiffio.h"
+
+#ifndef HAVE_GETOPT
+extern int getopt(int, char**, char*);
+#endif
 
 #define	CopyField(tag, v) \
     if (TIFFGetField(in, tag, &v)) TIFFSetField(out, tag, v)
@@ -37,7 +43,11 @@
 #define	CopyField3(tag, v1, v2, v3) \
     if (TIFFGetField(in, tag, &v1, &v2, &v3)) TIFFSetField(out, tag, v1, v2, v3)
 
-static	char fname[1024+1];
+#define PATH_LENGTH 8192
+
+static const char TIFF_SUFFIX[] = ".tif";
+
+static	char fname[PATH_LENGTH];
 
 static	int tiffcp(TIFF*, TIFF*);
 static	void newfilename(void);
@@ -50,19 +60,30 @@ main(int argc, char* argv[])
 	TIFF *in, *out;
 
 	if (argc < 2) {
+                fprintf(stderr, "%s\n\n", TIFFGetVersion());
 		fprintf(stderr, "usage: tiffsplit input.tif [prefix]\n");
 		return (-3);
 	}
-	if (argc > 2)
-		strcpy(fname, argv[2]);
+	if (argc > 2) {
+		strncpy(fname, argv[2], sizeof(fname));
+		fname[sizeof(fname) - 1] = '\0';
+	}
 	in = TIFFOpen(argv[1], "r");
 	if (in != NULL) {
 		do {
-			char path[1024+1];
+			size_t path_len;
+			char *path;
+			
 			newfilename();
-			strcpy(path, fname);
-			strcat(path, ".tif");
+
+			path_len = strlen(fname) + sizeof(TIFF_SUFFIX);
+			path = (char *) _TIFFmalloc(path_len);
+			strncpy(path, fname, path_len);
+			path[path_len - 1] = '\0';
+			strncat(path, TIFF_SUFFIX, path_len - strlen(path) - 1);
 			out = TIFFOpen(path, TIFFIsBigEndian(in)?"wb":"wl");
+			_TIFFfree(path);
+
 			if (out == NULL)
 				return (-2);
 			if (!tiffcp(in, out))
@@ -125,11 +146,11 @@ newfilename(void)
          * start from 0 every 676 times (provided by lastTurn)
          * this keeps us within a-z boundaries
          */
-	fpnt[1] = (fnum - lastTurn) / 26 + 'a';
+	fpnt[1] = (char)((fnum - lastTurn) / 26) + 'a';
 	/* 
          * cycle last letter every file, from a-z, then repeat
          */
-	fpnt[2] = fnum % 26 + 'a';
+	fpnt[2] = (char)(fnum % 26) + 'a';
 	fnum++;
 }
 
@@ -151,10 +172,12 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_SAMPLESPERPIXEL, samplesperpixel);
 	CopyField(TIFFTAG_COMPRESSION, compression);
 	if (compression == COMPRESSION_JPEG) {
-		uint16 count;
-		void *table;
-		TIFFGetField(in, TIFFTAG_JPEGTABLES, &count, &table);
-		TIFFSetField(out, TIFFTAG_JPEGTABLES, count, table);
+		uint32 count = 0;
+		void *table = NULL;
+		if (TIFFGetField(in, TIFFTAG_JPEGTABLES, &count, &table)
+		    && count > 0 && table) {
+		    TIFFSetField(out, TIFFTAG_JPEGTABLES, count, table);
+		}
 	}
         CopyField(TIFFTAG_PHOTOMETRIC, shortv);
 	CopyField(TIFFTAG_PREDICTOR, shortv);
@@ -174,7 +197,7 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_YPOSITION, floatv);
 	CopyField(TIFFTAG_IMAGEDEPTH, longv);
 	CopyField(TIFFTAG_TILEDEPTH, longv);
-	CopyField(TIFFTAG_SAMPLEFORMAT, longv);
+	CopyField(TIFFTAG_SAMPLEFORMAT, shortv);
 	CopyField2(TIFFTAG_EXTRASAMPLES, shortv, shortav);
 	{ uint16 *red, *green, *blue;
 	  CopyField3(TIFFTAG_COLORMAP, red, green, blue);
@@ -191,6 +214,13 @@ tiffcp(TIFF* in, TIFF* out)
 	CopyField(TIFFTAG_HOSTCOMPUTER, stringv);
 	CopyField(TIFFTAG_PAGENAME, stringv);
 	CopyField(TIFFTAG_DOCUMENTNAME, stringv);
+	CopyField(TIFFTAG_BADFAXLINES, longv);
+	CopyField(TIFFTAG_CLEANFAXDATA, longv);
+	CopyField(TIFFTAG_CONSECUTIVEBADFAXLINES, longv);
+	CopyField(TIFFTAG_FAXRECVPARAMS, longv);
+	CopyField(TIFFTAG_FAXRECVTIME, longv);
+	CopyField(TIFFTAG_FAXSUBADDRESS, stringv);
+	CopyField(TIFFTAG_FAXDCS, stringv);
 	if (TIFFIsTiled(in))
 		return (cpTiles(in, out));
 	else
@@ -200,23 +230,27 @@ tiffcp(TIFF* in, TIFF* out)
 static int
 cpStrips(TIFF* in, TIFF* out)
 {
-	tsize_t bufsize  = TIFFStripSize(in);
+	tmsize_t bufsize  = TIFFStripSize(in);
 	unsigned char *buf = (unsigned char *)_TIFFmalloc(bufsize);
 
 	if (buf) {
 		tstrip_t s, ns = TIFFNumberOfStrips(in);
-		uint32 *bytecounts;
+		uint64 *bytecounts;
 
-		TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts);
+		if (!TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts)) {
+			fprintf(stderr, "tiffsplit: strip byte counts are missing\n");
+                        _TIFFfree(buf);
+			return (0);
+		}
 		for (s = 0; s < ns; s++) {
-			if (bytecounts[s] > (uint32)bufsize) {
-				buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[s]);
+			if (bytecounts[s] > (uint64)bufsize) {
+				buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[s]);
 				if (!buf)
 					return (0);
-				bufsize = bytecounts[s];
+				bufsize = (tmsize_t)bytecounts[s];
 			}
-			if (TIFFReadRawStrip(in, s, buf, bytecounts[s]) < 0 ||
-			    TIFFWriteRawStrip(out, s, buf, bytecounts[s]) < 0) {
+			if (TIFFReadRawStrip(in, s, buf, (tmsize_t)bytecounts[s]) < 0 ||
+			    TIFFWriteRawStrip(out, s, buf, (tmsize_t)bytecounts[s]) < 0) {
 				_TIFFfree(buf);
 				return (0);
 			}
@@ -230,23 +264,27 @@ cpStrips(TIFF* in, TIFF* out)
 static int
 cpTiles(TIFF* in, TIFF* out)
 {
-	tsize_t bufsize = TIFFTileSize(in);
+	tmsize_t bufsize = TIFFTileSize(in);
 	unsigned char *buf = (unsigned char *)_TIFFmalloc(bufsize);
 
 	if (buf) {
 		ttile_t t, nt = TIFFNumberOfTiles(in);
-		uint32 *bytecounts;
+		uint64 *bytecounts;
 
-		TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts);
+		if (!TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts)) {
+			fprintf(stderr, "tiffsplit: tile byte counts are missing\n");
+                        _TIFFfree(buf);
+			return (0);
+		}
 		for (t = 0; t < nt; t++) {
-			if (bytecounts[t] > (uint32) bufsize) {
-				buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[t]);
+			if (bytecounts[t] > (uint64) bufsize) {
+				buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[t]);
 				if (!buf)
 					return (0);
-				bufsize = bytecounts[t];
+				bufsize = (tmsize_t)bytecounts[t];
 			}
-			if (TIFFReadRawTile(in, t, buf, bytecounts[t]) < 0 ||
-			    TIFFWriteRawTile(out, t, buf, bytecounts[t]) < 0) {
+			if (TIFFReadRawTile(in, t, buf, (tmsize_t)bytecounts[t]) < 0 ||
+			    TIFFWriteRawTile(out, t, buf, (tmsize_t)bytecounts[t]) < 0) {
 				_TIFFfree(buf);
 				return (0);
 			}
@@ -256,3 +294,12 @@ cpTiles(TIFF* in, TIFF* out)
 	}
 	return (0);
 }
+
+/* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

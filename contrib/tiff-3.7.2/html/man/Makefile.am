@@ -1,6 +1,6 @@
 # Tag Image File Format (TIFF) Software
 #
-# Copyright (C) 2004, Andrey Kiselev <dron@remotesensing.org>
+# Copyright (C) 2004, Andrey Kiselev <dron@ak4719.spb.edu>
 #
 # Permission to use, copy, modify, distribute, and sell this software and 
 # its documentation for any purpose is hereby granted without fee, provided
@@ -25,6 +25,7 @@
 
 docdir = $(LIBTIFF_DOCDIR)/html/man
 MANSRCDIR = $(top_srcdir)/man
+HTMLMANDIR = $(top_srcdir)/html/man
 
 GROFF = groff -Thtml -mandoc
 ECHO = echo
@@ -38,6 +39,12 @@ docfiles = \
 	TIFFcolor.3tiff.html \
 	TIFFDataWidth.3tiff.html \
 	TIFFError.3tiff.html \
+	TIFFFieldDataType.3tiff.html \
+	TIFFFieldName.3tiff.html \
+	TIFFFieldPassCount.3tiff.html \
+	TIFFFieldReadCount.3tiff.html \
+	TIFFFieldTag.3tiff.html \
+	TIFFFieldWriteCount.3tiff.html \
 	TIFFFlush.3tiff.html \
 	TIFFGetField.3tiff.html \
 	TIFFmemory.3tiff.html \
@@ -71,28 +78,23 @@ docfiles = \
 	TIFFWriteTile.3tiff.html \
 	fax2ps.1.html \
 	fax2tiff.1.html \
-	gif2tiff.1.html \
 	pal2rgb.1.html \
 	ppm2tiff.1.html \
-	ras2tiff.1.html \
 	raw2tiff.1.html \
-	rgb2ycbcr.1.html \
-	sgi2tiff.1.html \
-	thumbnail.1.html \
 	tiff2bw.1.html \
 	tiff2pdf.1.html \
 	tiff2ps.1.html \
 	tiff2rgba.1.html \
 	tiffcmp.1.html \
 	tiffcp.1.html \
+	tiffcrop.1.html \
 	tiffdither.1.html \
 	tiffdump.1.html \
 	tiffgt.1.html \
 	tiffinfo.1.html \
 	tiffmedian.1.html \
 	tiffset.1.html \
-	tiffsplit.1.html \
-	tiffsv.1.html
+	tiffsplit.1.html
 
 dist_doc_DATA = $(indexfile) $(docfiles)
 
@@ -100,18 +102,21 @@ INDEXSTART = '<HTML><HEAD><TITLE>Libtiff HTML manpage index</TITLE></HEAD><BODY 
 INDEXEND = '</ul></BODY></HTML>'
 
 .PHONY: index
-index: $(docfiles)
+index:
 	${ECHO} ${INDEXSTART} > $(indexfile)
-	for i in $^; do							\
+	for i in $(docfiles); do					\
 		${ECHO} '<li><A HREF='$$i'>'$$i'</a>' >> $(indexfile);  \
 	done
 	${ECHO} ${INDEXEND} >> $(indexfile)
 
-manpages := $(docfiles:.html=)
+manpages = $(docfiles:.html=)
 
-.PHONY: html
-html: index
+.PHONY: htmldoc
+htmldoc:
 	for i in $(manpages); do					\
-		${GROFF} $(MANSRCDIR)/$$i > $$i.html;			\
+		${GROFF} $(MANSRCDIR)/$$i > $(HTMLMANDIR)/$$i.html;	\
 	done
 
+EXTRA_DIST = \
+	CMakeLists.txt \
+	HtmlDoc.cmake

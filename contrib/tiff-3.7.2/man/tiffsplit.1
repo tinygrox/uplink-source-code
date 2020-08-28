@@ -1,4 +1,4 @@
-.\"	$Header: /cvs/maptools/cvsroot/libtiff/man/tiffsplit.1,v 1.2 2004/10/13 12:38:19 fwarmerdam Exp $
+.\" $Id: tiffsplit.1,v 1.7 2016-09-25 20:05:52 bfriesen Exp $
 .\"
 .\" Copyright (c) 1992-1997 Sam Leffler
 .\" Copyright (c) 1992-1997 Silicon Graphics, Inc.
@@ -23,7 +23,7 @@
 .\" OF THIS SOFTWARE.
 .\"
 .if n .po 0
-.TH TIFFCP 1 "September 26, 1994"
+.TH TIFFSPLIT 1 "September 20, 2005" "libtiff"
 .SH NAME
 tiffsplit \- split a multi-image
 .SM TIFF
@@ -50,7 +50,7 @@ suffix in the range [\fIaaa\fP-\fIzzz\fP], the suffix
 (e.g. 
 .IR xaaa.tif ,
 .IR xaab.tif ,
-\...
+.IR ... ,
 .IR xzzz.tif ).
 If a prefix is not specified on the command line,
 the default prefix of
@@ -59,8 +59,11 @@ is used.
 .SH OPTIONS
 None.
 .SH BUGS
-Only a select set of ``known tags'' is copied when spliting.
+Only a select set of ``known tags'' is copied when splitting.
 .SH "SEE ALSO"
-.IR tiffcp (1),
-.IR tiffinfo (1),
-.IR libtiff (3)
+.BR tiffcp (1),
+.BR tiffinfo (1),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.simplesystems.org/libtiff/

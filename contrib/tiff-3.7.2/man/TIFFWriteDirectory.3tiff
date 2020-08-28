@@ -1,4 +1,4 @@
-.\" $Id: TIFFWriteDirectory.3tiff,v 1.1 2004/11/11 14:39:16 dron Exp $
+.\" $Id: TIFFWriteDirectory.3tiff,v 1.4 2016-09-25 20:05:50 bfriesen Exp $
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -61,7 +61,7 @@ have an established location in the file.  It will rewrite the directory,
 but instead of place it at it's old location (as 
 .IR TIFFWriteDirectory
 would) it will place them at the end of the file, correcting the pointer from
-the preceeding directory or file header to point to it's new location.  This
+the preceding directory or file header to point to it's new location.  This
 is particularly important in cases where the size of the directory and
 pointed to data has grown, so it won't fit in the space available at the
 old location.
@@ -128,8 +128,11 @@ a previous directory.
 This can occur when setting up a link to the directory that is being
 written.
 .SH "SEE ALSO"
-.IR libtiff (3TIFF),
-.IR TIFFOpen (3TIFF),
-.IR TIFFError (3TIFF),
-.IR TIFFReadDirectory (3TIFF),
-.IR TIFFSetDirectory (3TIFF)
+.BR TIFFOpen (3TIFF),
+.BR TIFFError (3TIFF),
+.BR TIFFReadDirectory (3TIFF),
+.BR TIFFSetDirectory (3TIFF),
+.BR libtiff (3TIFF)
+.PP
+Libtiff library home page:
+.BR http://www.simplesystems.org/libtiff/

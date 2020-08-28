@@ -606,7 +606,7 @@ void SWInterface::Update ()
 
 			char swname [64];
 			int version;
-			sscanf ( currentbutton->caption, "%s v%1.1f", swname, &version );
+			sscanf ( currentbutton->caption, "%s v%d.1f", swname, &version );
 
 			// Create a version menu if neccisary
 

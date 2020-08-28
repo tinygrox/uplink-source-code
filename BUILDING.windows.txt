@@ -9,7 +9,7 @@ Contents:
 
 1. Introduction
 
-Open uplink\src\Uplink.sln with Microsoft Visual Studio 2005, from there you 
+Open Uplink.sln with Microsoft Visual Studio 2017, from there you 
 should be able to make modifcations and test them.
 
 2. Distribution

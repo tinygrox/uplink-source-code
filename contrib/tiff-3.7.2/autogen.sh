@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
-libtoolize --force --install --copy
-aclocal -I .
+libtoolize --force --copy
+aclocal -I ./m4
 autoheader
 automake --foreign --add-missing --copy
 autoconf

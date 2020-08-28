@@ -1,7 +1,7 @@
-/* $Id: strip_rw.c,v 1.4 2004/10/09 18:36:47 dron Exp $ */
+/* $Id: strip_rw.c,v 1.6 2008/03/28 01:42:07 bfriesen Exp $ */
 
 /*
- * Copyright (c) 2004, Andrey Kiselev  <dron@remotesensing.org>
+ * Copyright (c) 2004, Andrey Kiselev  <dron@ak4719.spb.edu>
  *
  * Permission to use, copy, modify, distribute, and sell this software and 
  * its documentation for any purpose is hereby granted without fee, provided
@@ -57,6 +57,8 @@ main(int argc, char **argv)
 	uint32		rowsperstrip;
 	uint16		compression;
 	uint16		spp, bps, photometric, sampleformat, planarconfig;
+        (void) argc;
+        (void) argv;
 
 	/* 
 	 * Test two special cases: image consisting from single line and image
